@@ -23,7 +23,6 @@ use Pimcore\Bundle\DataHubBundle\GraphQL\Service;
 use Pimcore\Bundle\DataHubBundle\GraphQL\Traits\ServiceTrait;
 use Pimcore\Bundle\DataHubBundle\PimcoreDataHubBundle;
 use Pimcore\Bundle\DataHubBundle\WorkspaceHelper;
-use Pimcore\Logger;
 use Pimcore\Model\Asset;
 
 class AssetType extends ObjectType
@@ -73,7 +72,7 @@ class AssetType extends ObjectType
                     'thumbnail' => ['type' => Type::string()]
 
                 ],
-                'resolve' => function($value = null, $args = [], $context, ResolveInfo $resolveInfo = null) {
+                'resolve' => function ($value = null, $args = [], $context, ResolveInfo $resolveInfo = null) {
                     if ($value instanceof ElementDescriptor) {
                         $image = Asset::getById($value["id"]);
                         if (!WorkspaceHelper::isAllowed($image, $context['configuration'], 'read')) {
@@ -91,8 +90,7 @@ class AssetType extends ObjectType
                                 return $image->getFullPath();
                             }
                         }
-                        if ($image instanceof Asset\Document)
-                        {
+                        if ($image instanceof Asset\Document) {
                             if (isset($args["thumbnail"])) {
                                 return $image->getImageThumbnail($args["thumbnail"]);
                             } else {
@@ -113,7 +111,7 @@ class AssetType extends ObjectType
                     'thumbnail' => ['type' => Type::string()]
 
                 ],
-                'resolve' => function($value = null, $args = [], $context, ResolveInfo $resolveInfo = null) {
+                'resolve' => function ($value = null, $args = [], $context, ResolveInfo $resolveInfo = null) {
                     if ($value instanceof ElementDescriptor) {
                         $image = Asset::getById($value["id"]);
                         if (!WorkspaceHelper::isAllowed($image, $context['configuration'], 'read')) {
@@ -125,14 +123,13 @@ class AssetType extends ObjectType
                         }
                         if ($image instanceof Asset\Image || $image instanceof Asset\Video) {
                             if (isset($args["thumbnail"])) {
-                                $thumb = $image->getThumbnail($args['thumbnail'], false);                                
+                                $thumb = $image->getThumbnail($args['thumbnail'], false);
                                 return base64_encode(file_get_contents($thumb->getFileSystemPath()));
                             } else {
                                 return base64_encode(file_get_contents($image->getFileSystemPath()));
                             }
                         }
-                        if ($image instanceof Asset\Document)
-                        {
+                        if ($image instanceof Asset\Document) {
                             if (isset($args["thumbnail"])) {
                                 $thumb = $image->getImageThumbnail($args['thumbnail']);
                                 return base64_encode(file_get_contents($thumb->getFileSystemPath()));
